@@ -22,10 +22,20 @@ app = FastAPI()
 class AuthorizedUser:
 
     def __init__(self, authorized_groups: set[str]) -> None:
-        self.authorized_groups = authorized_groups
+        self._authorized_groups = authorized_groups
     
+    # TODO
     # def __call__(self, user = Depends(get_current_user)):
     def __call__(self, username: str):
         # resolve the authorization header 
         # fetch the user based on the authorisation header 
+        try:
+            user = next(user for user in users if user.username == username)
+
+        except StopIteration:
+            raise HTTPException(status_code=403)
         
+        if user.groups.isdisjoint(self._authorized_groups):
+            raise HTTPException(status_code=403)
+        
+        return user
