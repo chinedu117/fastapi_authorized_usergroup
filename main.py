@@ -39,3 +39,11 @@ class AuthorizedUser:
             raise HTTPException(status_code=403)
         
         return user
+
+@app.get("/only-admins")
+def only_admin(user = Depends(AuthorizedUser(authorized_groups=("admin")))):
+    return f"Only admins can see this"
+
+@app.get("/only-students")
+def only_admin(user = Depends(AuthorizedUser(authorized_groups=("student")))):
+    return f"Only students can see this"
